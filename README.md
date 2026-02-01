@@ -1,3 +1,4 @@
+Markdown
 # 🚀 Backend - Plataforma de Gestión de Proyectos ESFOT
 
 > **Trabajo de Integración Curricular**
@@ -11,112 +12,269 @@ Este repositorio contiene el código fuente del **Backend (API RESTful)** desarr
 
 1. [Descripción del Proyecto](#-descripción-del-proyecto)
 2. [Tecnologías Utilizadas](#-tecnologías-utilizadas)
-3. [Características Principales](#-características-principales)
-4. [Instalación y Configuración](#-instalación-y-configuración)
-5. [Variables de Entorno](#-variables-de-entorno)
-6. [Documentación de la API](#-documentación-de-la-api)
-7. [Roles y Permisos](#-roles-y-permisos)
-8. [Autores](#-autores)
+3. [Instalación y Configuración](#-instalación-y-configuración)
+4. [Variables de Entorno](#-variables-de-entorno)
+5. [Documentación de la API (Endpoints)](#-documentación-de-la-api-endpoints)
+    - [Autenticación](#1-autenticación)
+    - [Proyectos Públicos](#2-proyectos-públicos)
+    - [Gestión de Proyectos (Privado)](#3-gestión-de-proyectos-privado)
+    - [Administración](#4-administración)
+6. [Estructura del Proyecto](#-estructura-del-proyecto)
+7. [Autores](#-autores)
 
 ---
 
 ## 📖 Descripción del Proyecto
 
-Este sistema permite a los estudiantes de la **ESFOT** publicar sus proyectos académicos, generando un portafolio digital visible para la comunidad. El backend gestiona la autenticación segura, la subida de imágenes a la nube, la interacción social (likes/comentarios) y un panel administrativo para la gestión de usuarios y aprobación de contenidos.
+Este sistema permite a los estudiantes de la **ESFOT** publicar sus proyectos académicos, generando un portafolio digital visible para la comunidad. El backend gestiona la autenticación segura, la subida de imágenes a la nube (Cloudinary), la interacción social (likes/comentarios) y un panel administrativo para moderar contenidos antes de su publicación.
 
 ---
 
 ## 🛠 Tecnologías Utilizadas
 
-* **Entorno:** [Node.js](https://nodejs.org/)
+* **Runtime:** [Node.js](https://nodejs.org/)
 * **Framework:** [Express.js](https://expressjs.com/)
-* **Base de Datos:** [MongoDB](https://www.mongodb.com/) (con Mongoose)
-* **Autenticación:** JWT (JSON Web Tokens) y OAuth (Google/Facebook)
-* **Almacenamiento de Imágenes:** [Cloudinary](https://cloudinary.com/)
-* **Emails:** Nodemailer (Confirmación de cuenta y recuperación de contraseña)
-
----
-
-## ✨ Características Principales
-
-### 🔐 Seguridad y Autenticación
-* Registro y Login de usuarios (Estudiantes y Administradores).
-* Confirmación de cuenta vía correo electrónico.
-* Recuperación de contraseña mediante token seguro.
-* Login social con **Google** y **Facebook**.
-
-### 📂 Gestión de Proyectos
-* **CRUD Completo:** Crear, Leer, Actualizar y Eliminar proyectos.
-* **Estados:** Los proyectos inician en `en_progreso` y requieren aprobación (`publicado`).
-* **Multimedia:** Carga de imágenes optimizadas a Cloudinary.
-* **Filtros:** Búsqueda por carrera, categoría (académico/extracurricular) y etiquetas.
-
-### 💬 Interacción Social
-* Sistema de **Likes**.
-* Sistema de **Comentarios** en los proyectos.
-* Contador de vistas.
-
-### 👑 Panel de Administración
-* Dashboard con estadísticas (Estudiantes por nivel/carrera).
-* Aprobación y publicación de proyectos.
-* Gestión y listado de estudiantes registrados.
+* **Base de Datos:** [MongoDB](https://www.mongodb.com/) + Mongoose
+* **Seguridad:** JWT (JSON Web Tokens) & Bcrypt
+* **Almacenamiento:** [Cloudinary](https://cloudinary.com/)
+* **Emails:** Nodemailer
 
 ---
 
 ## ⚙️ Instalación y Configuración
 
-Sigue estos pasos para ejecutar el proyecto localmente:
+1. **Clonar el repositorio:**
+   ```bash
+   git clone [https://github.com/tu-usuario/nombre-repo-backend.git](https://github.com/tu-usuario/nombre-repo-backend.git)
+   cd nombre-repo-backend
+Instalar dependencias:
 
-1.  **Clonar el repositorio:**
-    ```bash
-    git clone [https://github.com/tu-usuario/nombre-repo-backend.git](https://github.com/tu-usuario/nombre-repo-backend.git)
-    cd nombre-repo-backend
-    ```
+Bash
+npm install
+Configurar Variables de Entorno: Crea un archivo .env en la raíz (ver sección de variables).
 
-2.  **Instalar dependencias:**
-    ```bash
-    npm install
-    ```
+Ejecutar el servidor:
 
-3.  **Configurar Variables de Entorno:**
-    Crea un archivo `.env` en la raíz del proyecto y completa las variables (ver sección de abajo).
+Bash
+npm run dev  # Modo desarrollo
+🔑 Variables de Entorno
+Crea un archivo .env con las siguientes claves:
 
-4.  **Ejecutar el servidor:**
-    ```bash
-    # Modo desarrollo (con nodemon)
-    npm run dev
-
-    # Modo producción
-    npm start
-    ```
-
-El servidor iniciará en: `http://localhost:3000`
-
----
-
-## 🔑 Variables de Entorno
-
-Crea un archivo `.env` en la raíz y configura las siguientes claves:
-
-```env
+Fragmento de código
 PORT=3000
 MONGO_URI=tu_string_de_conexion_mongodb
-JWT_SECRET=tu_secreto_para_jwt
-CLIENT_URL=http://localhost:5173  # URL de tu Frontend
+JWT_SECRET=palabra_secreta_jwt
+CLIENT_URL=http://localhost:5173
 
 # Cloudinary (Imágenes)
 CLOUDINARY_CLOUD_NAME=...
 CLOUDINARY_API_KEY=...
 CLOUDINARY_API_SECRET=...
 
-# Email (Nodemailer)
+# Email & OAuth (Opcional para pruebas locales básicas)
 EMAIL_USER=...
 EMAIL_PASS=...
-
-# Google OAuth
 GOOGLE_CLIENT_ID=...
-GOOGLE_CLIENT_SECRET=...
+📚 Documentación de la API (Endpoints)
+A continuación se detallan los endpoints principales, qué datos enviar y qué respuesta esperar.
 
-# Facebook OAuth
-FACEBOOK_CLIENT_ID=...
-FACEBOOK_CLIENT_SECRET=...
+1. Autenticación
+🔐 Registro de Usuario
+Crea una nueva cuenta de estudiante.
+
+Método: POST
+
+URL: /api/auth/registro
+
+Body (JSON):
+
+JSON
+{
+  "nombre": "Luis",
+  "apellido": "Ochoa",
+  "cedula": "1234567890",
+  "email": "luis.ochoa@epn.edu.ec",
+  "password": "password123",
+  "carrera": "Desarrollo de Software",
+  "nivel": 5
+}
+Respuesta (200 OK):
+
+JSON
+{
+  "success": true,
+  "msg": "Revisa tu correo electrónico para confirmar tu cuenta"
+}
+🔐 Iniciar Sesión (Login)
+Autentica al usuario y devuelve un token JWT.
+
+Método: POST
+
+URL: /api/auth/login
+
+Body (JSON):
+
+JSON
+{
+  "email": "luis.ochoa@epn.edu.ec",
+  "password": "password123"
+}
+Respuesta (200 OK):
+
+JSON
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6...",
+  "rol": "estudiante",
+  "nombre": "Luis",
+  "apellido": "Ochoa",
+  "_id": "65d8e3b7a1c9d2f4e8b6c1d3"
+}
+2. Proyectos Públicos
+🌍 Listar Proyectos
+Obtiene todos los proyectos con estado publicado.
+
+Método: GET
+
+URL: /api/proyectos
+
+Query Params (Opcional): ?page=1, ?limit=10, ?carrera=Software
+
+Respuesta (200 OK):
+
+JSON
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "65d8f7a9...",
+      "titulo": "Sistema de Gestión",
+      "descripcion": "Plataforma web para...",
+      "imagenes": ["[https://res.cloudinary.com/](https://res.cloudinary.com/)..."],
+      "autor": { "nombre": "Luis", "apellido": "Ochoa" },
+      "vistas": 150,
+      "likes": ["id_usuario1", "id_usuario2"]
+    }
+  ],
+  "pagination": { "total": 10, "pages": 1 }
+}
+🌍 Ver Proyecto por ID
+Obtiene el detalle completo de un proyecto.
+
+Método: GET
+
+URL: /api/proyectos/:id
+
+Respuesta (200 OK):
+
+JSON
+{
+  "success": true,
+  "data": {
+    "_id": "65d8f7a9...",
+    "titulo": "Sistema de Gestión",
+    "tecnologias": ["React", "Node.js"],
+    "comentarios": [
+        { "texto": "Buen proyecto", "estudiante": "Maria" }
+    ]
+  }
+}
+3. Gestión de Proyectos (Privado)
+Nota: Estos endpoints requieren el header Authorization: Bearer <TOKEN>
+
+📂 Crear Proyecto
+Sube un nuevo proyecto (inicialmente en estado en_progreso).
+
+Método: POST
+
+URL: /api/proyectos
+
+Body (Multipart/Form-Data):
+
+titulo: "Mi Proyecto Final"
+
+descripcion: "Descripción detallada..."
+
+categoria: "academico"
+
+carrera: "Desarrollo de Software"
+
+fechaInicio: "2024-01-15"
+
+imagen: (Archivo de imagen)
+
+Respuesta (201 Created):
+
+JSON
+{
+  "success": true,
+  "message": "Proyecto creado exitosamente. Está en estado 'en_progreso'...",
+  "data": {
+    "_id": "...",
+    "titulo": "Mi Proyecto Final",
+    "estado": "en_progreso"
+  }
+}
+❤️ Dar Like / Quitar Like
+Método: POST / DELETE
+
+URL: /api/proyectos/:id/like
+
+Respuesta:
+
+JSON
+{
+  "success": true,
+  "message": "Like agregado",
+  "likes": 5
+}
+4. Administración
+Nota: Requiere token de usuario con rol admin.
+
+👑 Publicar Proyecto
+Cambia el estado de un proyecto de en_progreso a publicado.
+
+Método: PUT
+
+URL: /api/admin/proyectos/:id/publicar
+
+Respuesta:
+
+JSON
+{
+  "success": true,
+  "message": "Proyecto publicado exitosamente",
+  "data": { "estado": "publicado" }
+}
+👑 Listar Estudiantes
+Obtiene lista de usuarios registrados para gestión.
+
+Método: GET
+
+URL: /api/admin/estudiantes
+
+Respuesta:
+
+JSON
+{
+  "success": true,
+  "total": 45,
+  "data": [
+    { "nombre": "Juan", "email": "juan@epn.edu.ec", "carrera": "Software" }
+  ]
+}
+📂 Estructura del Proyecto
+Plaintext
+src/
+├── config/         # Conexión DB y Cloudinary
+├── controllers/    # Lógica de los endpoints (Auth, Proyectos, Admin)
+├── helpers/        # Generadores de JWT y Emails
+├── middleware/     # Protección de rutas (checkAuth, checkAdmin)
+├── models/         # Esquemas Mongoose (Usuario, Proyecto)
+├── routes/         # Definición de rutas de la API
+└── index.js        # Archivo principal
+👨‍💻 Autores
+Trabajo de Integración Curricular - ESFOT
+
+Luis Xavier Ochoa Calle - Desarrollo Backend & API
+
+© 2026 ESFOT - Todos los derechos reservados.
