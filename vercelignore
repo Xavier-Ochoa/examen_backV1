@@ -1,8 +1,0 @@
-node_modules
-uploads
-.env.local
-.env.*.local
-*.log
-.DS_Store
-.vscode
-.idea
