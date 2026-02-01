@@ -1,283 +1,392 @@
-Entendido, **Luis Xavier**. Aquí tienes el contenido completo y detallado del `README.md`. He consolidado la descripción del proyecto, la guía técnica y los ejemplos detallados de **Request/Response** basados en tus archivos de documentación para que cualquier persona que entre a tu repositorio entienda exactamente cómo funciona tu Backend.
 
----
 
 # 🚀 Backend - Plataforma de Gestión de Proyectos ESFOT
 
 > **Trabajo de Integración Curricular** > **Autor:** Luis Xavier Ochoa Calle
-> **Título:** Tecnólogo Superior en Desarrollo de Software
-
-Este repositorio contiene la **API RESTful** diseñada para gestionar el ecosistema de proyectos académicos y extracurriculares de la ESFOT. Permite a los estudiantes dar visibilidad a su trabajo y a los administradores moderar el contenido de calidad.
-
----
-
-## 📋 Tabla de Contenidos
-
-1. [Descripción del Proyecto](https://www.google.com/search?q=%23-descripci%C3%B3n-del-proyecto)
-2. [Tecnologías Utilizadas](https://www.google.com/search?q=%23-tecnolog%C3%ADas-utilizadas)
-3. [Instalación y Configuración](https://www.google.com/search?q=%23-instalaci%C3%B3n-y-configuraci%C3%B3n)
-4. [Documentación Técnica de Endpoints](https://www.google.com/search?q=%23-documentaci%C3%B3n-t%C3%A9cnica-de-endpoints)
-* [Módulo de Autenticación](https://www.google.com/search?q=%231-autenticaci%C3%B3n)
-* [Módulo de Proyectos (Estudiantes)](https://www.google.com/search?q=%232-proyectos-estudiante)
-* [Módulo de Interacción](https://www.google.com/search?q=%233-interacci%C3%B3n-social)
-* [Módulo Administrativo](https://www.google.com/search?q=%234-administraci%C3%B3n-y-moderaci%C3%B3n)
 
 
-5. [Estructura de Datos](https://www.google.com/search?q=%23-estructura-de-datos)
-6. [Flujo de Seguridad](https://www.google.com/search?q=%23-flujo-de-seguridad)
+## 📌 Descripción general del proyecto
+
+Este repositorio contiene el **backend** del sistema web informativo desarrollado para la **ESFOT**, cuyo objetivo es **gestionar, organizar y publicar proyectos académicos y extracurriculares** realizados por estudiantes.
+
+El backend expone una **API REST** que permite:
+
+* Registrar y administrar proyectos
+* Gestionar usuarios y autenticación
+* Manejar categorías, carreras y asignaturas
+* Subir y asociar imágenes a proyectos
+* Registrar vistas y estadísticas
+* Facilitar la conexión con un frontend web
+
+Este sistema está diseñado para ser **escalable, mantenible y fácil de integrar** con aplicaciones frontend modernas.
 
 ---
 
-## 📖 Descripción del Proyecto
+## 🎯 Objetivo del Backend
 
-El backend actúa como el núcleo del sistema, gestionando:
+El backend tiene como objetivo principal:
 
-* **Autenticación Robusta:** Registro, validación de correo y login social.
-* **Gestión Multimedia:** Integración con Cloudinary para el manejo de evidencias visuales.
-* **Moderación:** Sistema de estados (`en_progreso`, `publicado`) para control de calidad.
-* **Interacción:** Sistema de feedback mediante likes y comentarios.
-
----
-
-## 🛠 Tecnologías Utilizadas
-
-* **Motor:** Node.js v20+
-* **Framework:** Express.js
-* **Base de Datos:** MongoDB (Mongoose ODM)
-* **Seguridad:** JWT (JSON Web Tokens), Bcrypt (Hash de contraseñas)
-* **Servicios Externos:** Cloudinary (Imágenes) y Nodemailer (Correos)
+* Centralizar la información de los proyectos de la ESFOT
+* Proveer endpoints claros y seguros para el consumo desde el frontend
+* Facilitar la administración de contenidos académicos
+* Servir como base para futuros módulos (reportes, filtros avanzados, roles, etc.)
 
 ---
 
-## ⚙️ Instalación y Configuración
+## 🛠️ Tecnologías utilizadas
 
-1. **Clonación:**
-```bash
-git clone https://github.com/tu-usuario/backend-proyectos-esfot.git
-cd backend-proyectos-esfot
-
-```
-
-
-2. **Dependencias:**
-```bash
-npm install
-
-```
-
-
-3. **Variables de Entorno (.env):**
-```env
-PORT=3000
-MONGO_URI=tu_conexion_mongodb
-JWT_SECRET=clave_secreta_jwt
-CLIENT_URL=http://localhost:5173
-CLOUDINARY_CLOUD_NAME=...
-CLOUDINARY_API_KEY=...
-CLOUDINARY_API_SECRET=...
-EMAIL_USER=tu_correo@gmail.com
-EMAIL_PASS=tu_app_password
-
-```
-
-
+* **Node.js**
+* **Express.js**
+* **MongoDB**
+* **Mongoose**
+* **JWT (JSON Web Tokens)**
+* **Multer** (gestión de imágenes)
+* **Postman** (pruebas de endpoints)
 
 ---
 
-## 📚 Documentación Técnica de Endpoints
+## 🧱 Arquitectura general
 
-### 1. Autenticación
+El backend sigue una arquitectura basada en:
 
-#### **Registro de Usuario**
-
-* **Endpoint:** `POST /api/auth/registro`
-* **Descripción:** Crea un nuevo usuario. El campo `rol` por defecto es `estudiante`.
-* **Request Body:**
-```json
-{
-  "nombre": "Luis Xavier",
-  "apellido": "Ochoa Calle",
-  "cedula": "1234567890",
-  "email": "luis.ochoa@epn.edu.ec",
-  "password": "miPasswordSeguro",
-  "carrera": "Desarrollo de Software",
-  "nivel": 5
-}
-
-```
-
-
-* **Response (200):**
-```json
-{
-  "success": true,
-  "message": "Revisa tu correo para confirmar tu cuenta"
-}
-
-```
-
-
-
-#### **Login de Usuario**
-
-* **Endpoint:** `POST /api/auth/login`
-* **Request Body:**
-```json
-{
-  "email": "luis.ochoa@epn.edu.ec",
-  "password": "miPasswordSeguro"
-}
-
-```
-
-
-* **Response (200):**
-```json
-{
-  "success": true,
-  "token": "eyJhbGciOiJIUzI1Ni...",
-  "rol": "estudiante",
-  "nombre": "Luis Xavier"
-}
-
-```
-
-
+* **Rutas (Routes):** Definen los endpoints de la API
+* **Controladores (Controllers):** Contienen la lógica de negocio
+* **Modelos (Models):** Definen los esquemas de MongoDB
+* **Middlewares:** Autenticación, validaciones y manejo de errores
 
 ---
 
-### 2. Proyectos (Estudiante)
+## ▶️ Cómo ejecutar el proyecto
 
-#### **Crear Proyecto (Con Imagen)**
+1. Clonar el repositorio:
 
-* **Endpoint:** `POST /api/proyectos`
-* **Headers:** `Authorization: Bearer <TOKEN>`
-* **Request (Multipart/Form-Data):**
-* `titulo`: "App de Delivery"
-* `descripcion`: "Proyecto final de semestre..."
-* `categoria`: "academico"
-* `carrera`: "Desarrollo de Software"
-* `imagen`: (Archivo de imagen)
+   ```bash
+   git clone https://github.com/tu-usuario/tu-repositorio-backend.git
+   ```
 
+2. Instalar dependencias:
 
-* **Response (201):**
-```json
-{
-  "success": true,
-  "data": {
-    "_id": "65f123...",
-    "titulo": "App de Delivery",
-    "estado": "en_progreso",
-    "imagenes": ["https://res.cloudinary.com/..."]
-  }
-}
+   ```bash
+   npm install
+   ```
+
+3. Configurar variables de entorno (`.env`):
+
+   ```env
+   PORT=3000
+   MONGO_URI=tu_conexion_mongodb
+   JWT_SECRET=tu_clave_secreta
+   ```
+
+4. Ejecutar el servidor:
+
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## 🔐 Autenticación
+
+La API utiliza **JWT** para proteger ciertos endpoints.
+Al iniciar sesión, el backend devuelve un **token**, el cual debe enviarse en los headers:
 
 ```
-
-
-
-#### **Obtener Mis Proyectos**
-
-* **Endpoint:** `GET /api/proyectos/estudiante/me`
-* **Descripción:** Permite al estudiante ver sus proyectos publicados y pendientes.
-
----
-
-### 3. Interacción Social
-
-#### **Dar/Quitar Like**
-
-* **Endpoint:** `POST /api/proyectos/:id/like`
-* **Response (200):**
-```json
-{
-  "success": true,
-  "message": "Like actualizado",
-  "totalLikes": 15
-}
-
+Authorization: Bearer TOKEN
 ```
 
+---
 
+## 📡 Endpoints disponibles (35 endpoints)
 
-#### **Comentar Proyecto**
-
-* **Endpoint:** `POST /api/proyectos/:id/comentarios`
-* **Request Body:**
-```json
-{ "texto": "Excelente implementación de patrones de diseño." }
-
-```
-
-
+A continuación se describe **qué hace cada grupo de endpoints**, **qué se envía** y **qué devuelve**, de forma clara y entendible.
 
 ---
 
-### 4. Administración y Moderación
+### 👤 Usuarios
 
-#### **Listar Proyectos Pendientes**
+#### 1. Crear usuario
 
-* **Endpoint:** `GET /api/admin/proyectos?estado=en_progreso`
-* **Acceso:** Solo Admin.
+**POST** `/api/usuarios`
 
-#### **Publicar Proyecto**
+**Envía:**
 
-* **Endpoint:** `PUT /api/admin/proyectos/:id/publicar`
-* **Descripción:** Aprueba el proyecto para que sea visible públicamente.
-* **Response (200):**
-```json
-{
-  "success": true,
-  "message": "El proyecto ahora es visible para toda la comunidad",
-  "estado": "publicado"
-}
+* nombre
+* email
+* contraseña
+* rol
 
-```
+**Devuelve:**
 
-
-
-#### **Estadísticas del Sistema**
-
-* **Endpoint:** `GET /api/admin/estudiantes/estadisticas`
-* **Response (200):**
-```json
-{
-  "totalEstudiantes": 120,
-  "porCarrera": { "Software": 80, "Redes": 40 }
-}
-
-```
-
-
+* Usuario creado
+* Mensaje de confirmación
 
 ---
 
-## 📂 Estructura de Datos (Modelos)
+#### 2. Iniciar sesión
 
-### Proyecto
+**POST** `/api/usuarios/login`
 
-| Campo | Tipo | Descripción |
-| --- | --- | --- |
-| `titulo` | String | Nombre del proyecto |
-| `autor` | ObjectId | Referencia al modelo Usuario |
-| `estado` | String | `en_progreso` o `publicado` |
-| `vistas` | Number | Contador incremental |
-| `likes` | Array | IDs de usuarios que dieron like |
+**Envía:**
 
----
+* email
+* contraseña
 
-## 🛡 Flujo de Seguridad
+**Devuelve:**
 
-1. **Middleware `checkAuth`:** Valida que el token JWT enviado en los headers sea vigente.
-2. **Middleware `checkAdmin`:** Verifica que el rol del usuario decodificado sea `admin` para rutas críticas.
-3. **CORS:** Configurado para aceptar peticiones únicamente desde el dominio del Frontend.
+* Token JWT
+* Datos básicos del usuario
 
 ---
 
-## 👨‍💻 Autores
+#### 3. Obtener perfil
 
-* **Luis Xavier Ochoa Calle** - *Desarrollador Fullstack & Investigador*
+**GET** `/api/usuarios/perfil`
+
+**Envía:**
+
+* Token en headers
+
+**Devuelve:**
+
+* Información del usuario autenticado
 
 ---
 
-© 2026 **ESFOT - Escuela de Formación de Tecnólogos** *Quito, Ecuador*
+### 📂 Proyectos
+
+#### 4. Crear proyecto
+
+**POST** `/api/proyectos`
+
+**Envía:**
+
+* título
+* descripción
+* categoría
+* carrera
+* fechas
+* tecnologías
+* tags
+
+**Devuelve:**
+
+* Proyecto creado
+
+---
+
+#### 5. Obtener todos los proyectos
+
+**GET** `/api/proyectos`
+
+**Devuelve:**
+
+* Lista de proyectos publicados
+
+---
+
+#### 6. Obtener proyecto por ID
+
+**GET** `/api/proyectos/:id`
+
+**Devuelve:**
+
+* Información completa del proyecto
+
+---
+
+#### 7. Actualizar proyecto
+
+**PUT** `/api/proyectos/:id`
+
+**Envía:**
+
+* Campos a actualizar
+
+**Devuelve:**
+
+* Proyecto actualizado
+
+---
+
+#### 8. Eliminar proyecto
+
+**DELETE** `/api/proyectos/:id`
+
+**Devuelve:**
+
+* Confirmación de eliminación
+
+---
+
+### 🏷️ Categorías
+
+#### 9. Crear categoría
+
+**POST** `/api/categorias`
+
+**Envía:**
+
+* nombre
+
+**Devuelve:**
+
+* Categoría creada
+
+---
+
+#### 10. Listar categorías
+
+**GET** `/api/categorias`
+
+**Devuelve:**
+
+* Lista de categorías
+
+---
+
+### 🎓 Carreras
+
+#### 11. Crear carrera
+
+**POST** `/api/carreras`
+
+**Envía:**
+
+* nombre
+
+**Devuelve:**
+
+* Carrera registrada
+
+---
+
+#### 12. Listar carreras
+
+**GET** `/api/carreras`
+
+**Devuelve:**
+
+* Lista de carreras
+
+---
+
+### 📘 Asignaturas
+
+#### 13. Crear asignatura
+
+**POST** `/api/asignaturas`
+
+**Envía:**
+
+* nombre
+* carrera
+
+**Devuelve:**
+
+* Asignatura creada
+
+---
+
+#### 14. Listar asignaturas
+
+**GET** `/api/asignaturas`
+
+**Devuelve:**
+
+* Lista de asignaturas
+
+---
+
+### 🖼️ Imágenes
+
+#### 15. Subir imagen de proyecto
+
+**POST** `/api/imagenes`
+
+**Envía:**
+
+* archivo de imagen (form-data)
+
+**Devuelve:**
+
+* URL de la imagen
+* ID de almacenamiento
+
+---
+
+#### 16. Asociar imagen a proyecto
+
+**PUT** `/api/proyectos/:id/imagen`
+
+**Envía:**
+
+* URL o ID de imagen
+
+**Devuelve:**
+
+* Proyecto actualizado
+
+---
+
+### 👁️ Estadísticas
+
+#### 17. Registrar vista
+
+**POST** `/api/proyectos/:id/vista`
+
+**Devuelve:**
+
+* Contador de vistas actualizado
+
+---
+
+#### 18. Obtener proyectos más vistos
+
+**GET** `/api/proyectos/populares`
+
+**Devuelve:**
+
+* Ranking de proyectos
+
+---
+
+### 🔍 Filtros y búsqueda
+
+#### 19. Filtrar por categoría
+
+**GET** `/api/proyectos/categoria/:nombre`
+
+#### 20. Filtrar por carrera
+
+**GET** `/api/proyectos/carrera/:nombre`
+
+#### 21. Buscar por texto
+
+**GET** `/api/proyectos/buscar?q=texto`
+
+---
+
+### 🔒 Administración
+
+#### 22–35. Endpoints administrativos
+
+Incluyen:
+
+* Publicar / despublicar proyectos
+* Cambiar estado
+* Control de visibilidad
+* Gestión avanzada de usuarios
+* Eliminación lógica
+* Auditoría básica
+
+**Todos requieren autenticación y rol administrador.**
+
+---
+
+## 🧪 Pruebas
+
+Los endpoints fueron probados usando **Postman**.
+Se incluye una guía de pruebas para facilitar la validación del backend.
+
+-
