@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { generarTitulosProyecto } from '../controllers/ia_controller.js';
+import { generarImagenProyecto } from '../controllers/ia_controller.js';
 import { verificarTokenJWT } from '../middlewares/JWT.js';
 
 const router = Router();
@@ -8,6 +8,6 @@ const router = Router();
 // POST /api/ia/generar-imagen
 // Body: { descripcion: string }
 // Retorna: { success: boolean, data: { imagen: string (base64), prompt: string, modelo: string } }
-router.post('/generar-titulo', verificarTokenJWT, generarTitulosProyecto);
+router.post('/generar-titulo', verificarTokenJWT, generarImagenProyecto);
 
 export default router;
