@@ -1,4 +1,6 @@
+// auth_routes.js
 import { Router } from 'express';
+import cors from 'cors';
 import passport from 'passport';
 import { 
   comprobarTokenPasword, 
@@ -14,40 +16,49 @@ import {
   fetchQuoteController
 } from '../controllers/auth_controller.js';
 import { verificarTokenJWT, crearTokenJWT } from '../middlewares/JWT.js';
-
-// ⭐ IMPORTAR VALIDACIONES
 import { validarRegistro } from '../validators/auth_validators.js';
 import { manejarErroresValidacion } from '../middlewares/validaciones.js';
 
 const router = Router();
 
+// ===== CORS CONFIG - UNIVERSAL PARA RUTAS PÚBLICAS =====
+const corsOptions = {
+  origin: 'https://superlative-halva-ff0378.netlify.app', // frontend Netlify
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+
+// Middleware para aplicar CORS a todas las rutas públicas
+const corsMiddleware = (req, res, next) => cors(corsOptions)(req, res, next);
+
 // ===== RUTAS PÚBLICAS - AUTENTICACIÓN TRADICIONAL =====
 
-// Registro CON VALIDACIÓN
+// Registro con validación
 router.post(
   '/registro',
+  corsMiddleware,
   validarRegistro,
   manejarErroresValidacion,
   registro
 );
-router.post('/login', login);
-router.get('/confirm/:token', confirmarMail);
-router.post('/recuperarpassword', recuperarPassword);
-router.get('/recuperarpassword/:token', comprobarTokenPasword);
-router.post('/nuevopassword/:token', crearNuevoPassword);
+
+// Login
+router.post('/login', corsMiddleware, login);
+
+// Confirmación de mail
+router.get('/confirm/:token', corsMiddleware, confirmarMail);
+
+// Recuperar contraseña
+router.post('/recuperarpassword', corsMiddleware, recuperarPassword);
+router.get('/recuperarpassword/:token', corsMiddleware, comprobarTokenPasword);
+router.post('/nuevopassword/:token', corsMiddleware, crearNuevoPassword);
 
 // Servicios adicionales
-router.get('/random-image', getUnsplashImage);
-router.get('/frases', fetchQuoteController);
+router.get('/random-image', corsMiddleware, getUnsplashImage);
+router.get('/frases', corsMiddleware, fetchQuoteController);
 
 // ===== RUTAS OAUTH GOOGLE =====
-
-/**
- * GET /api/auth/google
- * Inicia el flujo de autenticación con Google
- * 
- * Para probar: Abre http://localhost:3000/api/auth/google en el navegador
- */
 router.get(
   '/google',
   passport.authenticate('google', {
@@ -55,32 +66,22 @@ router.get(
   })
 );
 
-/**
- * GET /api/auth/google/callback
- * Callback de Google - Devuelve JSON con el token
- */
 router.get(
   '/google/callback',
   passport.authenticate('google', { 
     failureRedirect: '/api/auth/google/failure',
-    session: false, // No usar sesiones, solo JWT
+    session: false,
   }),
   async (req, res) => {
     try {
-      // Actualizar último login
       await req.user.updateLastLogin();
-      
-      // Crear JWT
       const token = crearTokenJWT(req.user._id, req.user.rol);
-      
-      // Preparar datos del usuario (sin campos sensibles)
       const { password, token: userToken, __v, ...userData } = req.user.toObject();
-      
-      // ===== RESPUESTA JSON =====
+
       res.status(200).json({
         success: true,
         message: 'Autenticación con Google exitosa',
-        token: token,
+        token,
         user: {
           _id: userData._id,
           nombre: userData.nombre,
@@ -108,10 +109,6 @@ router.get(
   }
 );
 
-/**
- * GET /api/auth/google/failure
- * Manejo de errores de Google OAuth
- */
 router.get('/google/failure', (req, res) => {
   res.status(401).json({
     success: false,
@@ -121,13 +118,6 @@ router.get('/google/failure', (req, res) => {
 });
 
 // ===== RUTAS OAUTH FACEBOOK =====
-
-/**
- * GET /api/auth/facebook
- * Inicia el flujo de autenticación con Facebook
- * 
- * Para probar: Abre http://localhost:3000/api/auth/facebook en el navegador
- */
 router.get(
   '/facebook',
   passport.authenticate('facebook', {
@@ -135,10 +125,6 @@ router.get(
   })
 );
 
-/**
- * GET /api/auth/facebook/callback
- * Callback de Facebook - Devuelve JSON con el token
- */
 router.get(
   '/facebook/callback',
   passport.authenticate('facebook', { 
@@ -147,20 +133,14 @@ router.get(
   }),
   async (req, res) => {
     try {
-      // Actualizar último login
       await req.user.updateLastLogin();
-      
-      // Crear JWT
       const token = crearTokenJWT(req.user._id, req.user.rol);
-      
-      // Preparar datos del usuario
       const { password, token: userToken, __v, ...userData } = req.user.toObject();
-      
-      // ===== RESPUESTA JSON =====
+
       res.status(200).json({
         success: true,
         message: 'Autenticación con Facebook exitosa',
-        token: token,
+        token,
         user: {
           _id: userData._id,
           nombre: userData.nombre,
@@ -188,10 +168,6 @@ router.get(
   }
 );
 
-/**
- * GET /api/auth/facebook/failure
- * Manejo de errores de Facebook OAuth
- */
 router.get('/facebook/failure', (req, res) => {
   res.status(401).json({
     success: false,
@@ -201,7 +177,6 @@ router.get('/facebook/failure', (req, res) => {
 });
 
 // ===== RUTAS PROTEGIDAS =====
-
 router.get('/perfil', verificarTokenJWT, perfil);
 router.put('/perfil/:id', verificarTokenJWT, actualizarPerfil);
 router.put('/password/:id', verificarTokenJWT, actualizarPassword);
