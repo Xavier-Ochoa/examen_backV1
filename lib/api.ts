@@ -1,5 +1,30 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api"
 
+// IA - Sugerencias de títulos
+export async function getSugerenciasTitulo(descripcion: string) {
+  const response = await fetch(`${API_URL}/ia/sugerir-titulo`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ descripcion }),
+  })
+  if (!response.ok) throw new Error("Error al obtener sugerencias")
+  return response.json()
+}
+
+// Random image
+export async function getRandomImage() {
+  const response = await fetch(`${API_URL}/auth/random-image`)
+  if (!response.ok) throw new Error("Error al obtener imagen")
+  return response.json()
+}
+
+// Frases inspiradoras
+export async function getFraseInspiradora() {
+  const response = await fetch(`${API_URL}/auth/frases`)
+  if (!response.ok) throw new Error("Error al obtener frase")
+  return response.json()
+}
+
 function getAuthHeaders(): HeadersInit {
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
   return {
