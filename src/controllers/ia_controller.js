@@ -6,11 +6,12 @@ import fetch from 'node-fetch';
 const HF_API_URL = 'https://router.huggingface.co/v1/chat/completions';
 
 // ============================================================
-// POST /api/ia/generar-titulos
+// POST /api/ia/generar-imagen-proyecto
 // Body: { descripcion: string }
 // Retorna: { success, data: { titulos, modelo } }
+// (NOTA: aunque el nombre diga "imagen", SOLO genera TÍTULOS)
 // ============================================================
-export const generarTitulosProyecto = async (req, res) => {
+export const generarImagenProyecto = async (req, res) => {
   try {
     const { descripcion } = req.body;
 
@@ -57,7 +58,7 @@ y genera 3 títulos claros, profesionales y coherentes:
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'mistralai/Mistral-7B-Instruct-v0.2',
+        model: 'meta-llama/Llama-3.1-8B-Instruct',
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.6,
         max_tokens: 150
