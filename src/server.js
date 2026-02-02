@@ -33,12 +33,14 @@ app.use(express.json());
 app.use(
   cors({
     origin: [
-      'http://127.0.0.1:5501',    // Agregar el origen que usas en el frontend
-      'http://localhost:5173',    // Agregar otros orígenes que necesites
-      process.env.URL_FRONTEND || "*"  // Puedes mantener la variable de entorno si deseas flexibilidad
+      'http://127.0.0.1:5501',
+      'http://localhost:5173',
+      'http://localhost:3001',    // Next.js frontend
+      'http://localhost:3002',    // Next.js frontend alternativo
+      process.env.URL_FRONTEND || "*"
     ],
-    methods: ["GET", "POST", "PUT", "DELETE"], // Métodos permitidos
-    credentials: true, // Permitir cookies/credenciales si es necesario
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
   })
 );
 
