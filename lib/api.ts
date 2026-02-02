@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://examen-back-v1.vercel.app/api"
 
 // IA - Sugerencias de títulos
 export async function getSugerenciasTitulo(descripcion: string) {
