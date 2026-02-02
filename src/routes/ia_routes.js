@@ -8,6 +8,6 @@ const router = Router();
 // POST /api/ia/generar-imagen
 // Body: { descripcion: string }
 // Retorna: { success: boolean, data: { imagen: string (base64), prompt: string, modelo: string } }
-router.post('/generar-imagen', verificarTokenJWT, generarImagenProyecto);
+router.post('/generar-titulo', verificarTokenJWT, generarImagenProyecto);
 
 export default router;
