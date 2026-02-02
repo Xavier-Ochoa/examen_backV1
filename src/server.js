@@ -13,8 +13,6 @@ import iaRoutes from "./routes/ia_routes.js";
 import fileUpload from "express-fileupload";
 import { v2 as cloudinary } from 'cloudinary';
 
-
-
 // ===== CONFIGURACIÓN DE CLOUDINARY =====
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -29,28 +27,26 @@ const app = express();
 // Body parser
 app.use(express.json());
 
-// CORS
-app.use(
-  cors({
-    origin: [
-      'http://127.0.0.1:5501',    // Agregar el origen que usas en el frontend
-      'https://superlative-halva-ff0378.netlify.app',
-      'http://localhost:5173',    // Agregar otros orígenes que necesites
-      process.env.URL_FRONTEND || "*"  // Puedes mantener la variable de entorno si deseas flexibilidad
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"], // Métodos permitidos
-    credentials: true, // Permitir cookies/credenciales si es necesario
-  })
-);
+// ===== CORS - CORREGIDO =====
+app.use(cors({
+  origin: [
+    'https://superlative-halva-ff0378.netlify.app', // tu frontend Netlify
+    'http://localhost:5173', // para desarrollo local
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true, // permite enviar cookies/headers de autenticación si los usas
+}));
 
-// File upload para Cloudinary
-// Usar /tmp en producción (Vercel) y ./uploads en desarrollo
+// Manejar preflight OPTIONS para todos los endpoints
+app.options('*', cors());
+
+// ===== FILE UPLOAD =====
 const uploadDir = process.env.NODE_ENV === 'production' ? '/tmp' : './uploads';
-
 app.use(fileUpload({
   useTempFiles: true,
   tempFileDir: uploadDir,
-  debug: false, // Cambiar a true si necesitas debugging
+  debug: false,
 }));
 
 // ===== CONFIGURACIÓN DE SESIONES =====
@@ -72,7 +68,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // ===== RUTAS =====
-
 app.get("/", (req, res) => {
   res.send("API de Proyectos ESFOT - EPN");
 });
@@ -99,7 +94,6 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/ia", iaRoutes);
 
 // ===== MANEJO DE ERRORES =====
-
 app.use((req, res) => {
   res.status(404).json({
     success: false,
